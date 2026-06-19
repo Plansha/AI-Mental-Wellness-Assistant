@@ -1,31 +1,59 @@
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import streamlit as st
-import pandas as pd
-from database import SymptomDatabase
-from utils import show_metrics
-from analysis import SymptomAnalyzer
 
-st.set_page_config(page_title="View Data", layout="wide")
-st.header("📊 View All Data")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import streamlit as st
+from database import SymptomDatabase
+
+st.set_page_config(
+    page_title="Mood History",
+    layout="wide"
+)
+
+st.header("📊 Mood History")
 
 db = SymptomDatabase()
-df = db.get_all_symptoms()
+
+df = db.get_all_moods()
 
 if not df.empty:
-    stats = SymptomAnalyzer.analyze_overview(df)
-    show_metrics(stats)
-    
-    st.dataframe(df, use_container_width=True)
-    
-    st.subheader("🗑️ Delete Entries")
-    entry_id = st.number_input("Entry ID to delete", min_value=1, value=1)
+
+    st.success(
+        f"Found {len(df)} mood entries"
+    )
+
+    st.dataframe(
+        df,
+        use_container_width=True
+    )
+
+    st.subheader("🗑️ Delete Mood Entry")
+
+    entry_id = st.number_input(
+        "Entry ID",
+        min_value=1,
+        value=1
+    )
+
     if st.button("Delete Entry"):
-        if db.delete_entry(entry_id):
-            st.success("Entry deleted!")
+
+        if db.delete_mood(entry_id):
+
+            st.success(
+                "Entry deleted successfully!"
+            )
+
             st.rerun()
+
         else:
-            st.error("Entry not found")
+
+            st.error(
+                "Entry not found."
+            )
+
 else:
-    st.info("👆 Log some symptoms first!")
+
+    st.info(
+        "No mood entries found yet."
+    )
