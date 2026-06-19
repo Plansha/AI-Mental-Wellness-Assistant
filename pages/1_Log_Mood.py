@@ -2,65 +2,20 @@ import streamlit as st
 from datetime import datetime
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database import SymptomDatabase
+from sentiment import analyze_sentiment
 
 st.set_page_config(
     page_title="Log Mood",
     layout="wide"
 )
-st.error("🚨 NEW MOOD PAGE LOADED")
+
 st.header("🧠 AI Mental Wellness Assistant")
 
 db = SymptomDatabase()
-
-
-# -------------------------
-# SIMPLE SENTIMENT ANALYSIS
-# -------------------------
-
-def analyze_sentiment(text):
-
-    text = text.lower()
-
-    positive_words = [
-        "happy",
-        "great",
-        "good",
-        "excited",
-        "amazing",
-        "confident",
-        "motivated",
-        "relaxed"
-    ]
-
-    negative_words = [
-        "sad",
-        "stress",
-        "anxious",
-        "depressed",
-        "angry",
-        "worried",
-        "tired",
-        "upset"
-    ]
-
-    positive_score = sum(
-        word in text for word in positive_words
-    )
-
-    negative_score = sum(
-        word in text for word in negative_words
-    )
-
-    if positive_score > negative_score:
-        return "Positive"
-
-    elif negative_score > positive_score:
-        return "Negative"
-
-    return "Neutral"
 
 
 # -------------------------
@@ -94,7 +49,7 @@ col1, col2 = st.columns(2)
 with col1:
 
     mood = st.selectbox(
-        "Current Mood",
+        "😊 Current Mood",
         [
             "Happy",
             "Calm",
@@ -107,7 +62,7 @@ with col1:
     )
 
     stress_level = st.slider(
-        "Stress Level",
+        "📊 Stress Level",
         1,
         10,
         5
@@ -116,11 +71,11 @@ with col1:
 with col2:
 
     date_input = st.date_input(
-        "Date"
+        "📅 Date"
     )
 
     time_input = st.time_input(
-        "Time"
+        "⏰ Time"
     )
 
     timestamp = datetime.combine(
@@ -129,7 +84,7 @@ with col2:
     )
 
 trigger = st.selectbox(
-    "Main Trigger",
+    "⚡ Main Trigger",
     [
         "Studies",
         "Exams",
@@ -138,12 +93,15 @@ trigger = st.selectbox(
         "Friends",
         "Health",
         "Finances",
+        "Work",
         "Other"
     ]
 )
 
 journal_entry = st.text_area(
-    "Describe how you are feeling today"
+    "📝 Describe how you are feeling today",
+    height=150,
+    placeholder="Example: I feel stressed because of upcoming exams..."
 )
 
 if st.button(
@@ -173,11 +131,11 @@ if st.button(
         )
 
         st.info(
-            f"Detected Sentiment: {sentiment}"
+            f"🧠 AI Sentiment Analysis Result: {sentiment}"
         )
 
-        st.write(
-            "### 🌿 Wellness Suggestion"
+        st.subheader(
+            "🌿 Personalized Wellness Suggestion"
         )
 
         st.write(
@@ -189,5 +147,5 @@ if st.button(
     else:
 
         st.error(
-            "❌ Failed to save mood"
+            "❌ Failed to save mood."
         )
